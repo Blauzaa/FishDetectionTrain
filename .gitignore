@@ -5,6 +5,6 @@
 !.gitignore
 !mmdetection/
 !*.py
-!*.pth
+# !*.pth
 !*.ipynb
 !*.md
