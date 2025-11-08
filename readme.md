@@ -168,73 +168,78 @@ Menurunkan learning rate + menyederhanakan augmentasi untuk mendapatkan baseline
 - Tambah augmentasi & resolusi untuk meningkatkan presisi bbox + confidence score.  
 
 ---
+### 🧪 Eksperimen #4: Peningkatan Performa dengan Augmentasi & Resolusi
 
-🧪 Eksperimen #4: Peningkatan Performa dengan Augmentasi & Resolusi
-Tujuan/Hipotesis:
-Augmentasi kompleks + resolusi input lebih tinggi → meningkatkan presisi bounding box & confidence score.
-🔧 Pengaturan:
-Aktifkan kembali PhotoMetricDistortion & RandomAffine.
-Resize scale: (800, 800) (sebelumnya (640, 640)).
-Epoch: 75 (hasil terbaik di epoch 50).
-Base LR: 2e-5 (tetap untuk stabilitas).
-Training: lanjut dari checkpoint terbaik eksperimen #3 (epoch_35.pth).
-📊 Observasi & Hasil:
-Kurva Training: Model beradaptasi dan mencapai puncak baru di epoch 50, namun kemudian performanya mulai menurun (sedikit overfitting).
-Hasil Terbaik (Epoch 50):
-mAP@.50:.95: 57.8% (🔻 Turun dari 58.6%)
-mAP@.50: 95.3% (🔼 Naik dari 92.9%)
-mAP@.75: 62.0% (🔻 Turun dari 63.9%)
-🔬 Diagnosis & Analisis:
-Kesimpulan Utama: Hipotesis Gagal. Augmentasi yang lebih kompleks dan resolusi yang lebih tinggi ternyata kontra-produktif. Meskipun kemampuan deteksi dasar (mAP@50) sedikit meningkat, presisi bounding box (mAP@75) dan performa keseluruhan (mAP) justru menurun.
-Efek Negatif: Model menjadi kurang percaya diri pada objek yang sulit (kecil/terhalang), menyebabkan beberapa deteksi valid hilang. Ini paling terlihat pada kelas Gurami dan Tiger Barb yang performanya turun. Precision pada Manfish juga tetap menjadi masalah.
-💡 Rencana untuk Eksperimen #5:
-Kembali ke konfigurasi stabil dari Eksperimen #3 sebagai dasar.
-Lakukan tuning yang lebih halus dan terarah alih-alih perubahan besar. Fokus pada peningkatan Manfish dan presisi BBox tanpa merusak performa kelas lain.
+**Tujuan/Hipotesis:**
+Augmentasi kompleks + resolusi input lebih tinggi akan meningkatkan presisi bounding box & confidence score.
+
+🔧 **Pengaturan:**
+- **Base LR:** `2e-5` (tetap untuk stabilitas)
+- **Augmentasi:** `PhotoMetricDistortion` & `RandomAffine` diaktifkan
+- **Resolusi (Resize scale):** `(800, 800)`
+- **Training:** Melanjutkan dari checkpoint Eksperimen #3 (epoch\_35.pth)
+- **Epoch Dijalankan:** 75 (hasil terbaik di epoch 50)
+
+📊 **Hasil Terbaik (Epoch 50):**
+- **mAP@.50:.95:** 57.8% (🔻 Turun dari 58.6%)
+- **mAP@.50:** 95.3% (🔼 Naik dari 92.9%)
+- **mAP@.75:** 62.0% (🔻 Turun dari 63.9%)
+
+🔬 **Analisis:**
+- Hipotesis gagal. Augmentasi yang lebih kompleks dan resolusi yang lebih tinggi ternyata kontra-produktif.
+- Meskipun kemampuan deteksi dasar (mAP@.50) sedikit meningkat, presisi bounding box (mAP@.75) dan performa keseluruhan (mAP) justru menurun.
+- Model menjadi kurang percaya diri pada objek yang sulit, menyebabkan beberapa deteksi valid hilang.
+
+💡 **Rencana:**
+- Kembali ke konfigurasi stabil dari Eksperimen #3 sebagai dasar.
+- Lakukan tuning yang lebih halus dan terarah, fokus pada peningkatan kelas Manfish dan presisi BBox.
+
 ---
 
----
+### 🧪 Eksperimen #5: Fine-Tuning dengan Augmentasi Warna
 
-🧪 Eksperimen #5: Fine-Tuning dengan Augmentasi Warna
-Tujuan/Hipotesis:
+**Tujuan/Hipotesis:**
 Menambahkan augmentasi warna (PhotoMetricDistortion) pada baseline terbaik (Eksperimen #3) akan meningkatkan kemampuan generalisasi dan presisi bounding box.
-🔧 Pengaturan:
-Dasar Konfigurasi: Menggunakan pengaturan dari Eksperimen #3 (Base LR 2e-5, Resize 640x640).
-Perubahan Augmentasi: PhotoMetricDistortion diaktifkan. RandomAffine tetap dinonaktifkan.
-Metode Training: Melanjutkan training dari checkpoint terbaik Eksperimen #3 (epoch_35.pth).
-Epoch: 60 (hasil terbaik di epoch 44).
-📊 Observasi & Hasil:
-Kurva Training: SUKSES. Model menunjukkan peningkatan performa yang stabil, mencapai puncak baru di epoch 44.
-Hasil Terbaik (Epoch 44):
-mAP@.50:.95: 59.2% (🔼 Naik dari 58.6%)
-mAP@.50: 94.0% (🔼 Naik dari 92.9%)
-mAP@.75: 67.6% (🔼 Naik signifikan dari 63.9%)
-🔬 Diagnosis & Analisis:
-Kesimpulan Utama: Hipotesis Berhasil. Augmentasi warna terbukti efektif meningkatkan presisi penempatan bounding box (mAP@.75) dan performa keseluruhan. Ini adalah model terbaik sejauh ini.
-Masalah yang Tersisa: Kelas Manfish (mAP 42.3%) tetap menjadi yang terlemah dan tidak menunjukkan peningkatan. Ini mengindikasikan bahwa masalah pada kelas ini kemungkinan besar bersifat intrinsik pada data (misalnya, variasi bentuk yang tinggi, jumlah sampel yang kurang representatif, atau kualitas gambar yang menantang).
-💡 Rencana untuk Eksperimen #6:
-Kita telah mencapai titik di mana tuning augmentasi lebih lanjut mungkin tidak akan memberikan banyak hasil. Langkah logis berikutnya adalah mencoba arsitektur model yang secara fundamental lebih kuat dalam menangani variasi dan presisi.
+
+🔧 **Pengaturan:**
+- **Base LR:** `2e-5`
+- **Augmentasi:** `PhotoMetricDistortion` diaktifkan
+- **Resolusi (Resize scale):** `(640, 640)`
+- **Training:** Melanjutkan dari checkpoint Eksperimen #3 (epoch\_35.pth)
+- **Epoch Dijalankan:** 60 (hasil terbaik di epoch 44)
+
+📊 **Hasil Terbaik (Epoch 44):**
+- **mAP@.50:.95:** 59.2% (🔼 Naik dari 58.6%)
+- **mAP@.50:** 94.0% (🔼 Naik dari 92.9%)
+- **mAP@.75:** 67.6% (🔼 Naik signifikan dari 63.9%)
+
+🔬 **Analisis:**
+- Hipotesis berhasil. Augmentasi warna terbukti efektif meningkatkan presisi bounding box (mAP@.75) dan performa keseluruhan.
+- Ini adalah model terbaik sejauh ini.
+- Kelas `Manfish` (mAP 42.3%) tetap menjadi yang terlemah dan tidak menunjukkan peningkatan, mengindikasikan masalah intrinsik pada data.
+
+💡 **Rencana:**
+- Tuning augmentasi lebih lanjut kemungkinan tidak akan memberikan banyak hasil.
+- Langkah berikutnya adalah mencoba teknik augmentasi yang secara fundamental lebih kuat untuk menangani variasi dan presisi.
+
 ---
 
+### 🧪 Eksperimen #6: Peningkatan Presisi dengan Mosaic Augmentation
 
-🧪 Eksperimen #6: Peningkatan Presisi dengan Mosaic Augmentation
-Tujuan/Hipotesis:
-Menambahkan augmentasi Mosaic akan membuat model lebih tangguh dalam mengenali objek dalam berbagai skala dan konteks, yang diharapkan dapat meningkatkan performa pada kelas sulit (Manfish) dan menaikkan mAP keseluruhan.
-🔧 Pengaturan:
-Dasar Konfigurasi: Menggunakan pengaturan terbaik dari Eksperimen #5 (LR 2e-5, PhotoMetricDistortion).
-Perubahan Augmentasi: Pipeline training dimodifikasi untuk menyertakan Mosaic sebagai augmentasi utama.
-Metode Training: Melanjutkan training dari checkpoint terbaik Eksperimen #5 (epoch_44.pth).
-Epoch: 75 (hasil terbaik dicapai lebih awal, di epoch 31 dari sesi fine-tuning ini).
-📊 Observasi & Hasil:
-Kurva Training: SUKSES BESAR. Model beradaptasi dengan cepat pada data Mosaic dan menunjukkan peningkatan performa yang signifikan dan stabil, mencapai puncak baru.
-Hasil Terbaik (Epoch 31 Sesi Fine-Tuning):
-mAP@.50:.95: 62.9% (🔼 Naik signifikan dari 59.2%)
-mAP@.50: 95.2% (🔼 Naik dari 94.0%)
-mAP@.75: 70.8% (🔼 Naik signifikan dari 67.6%)
-🔬 Diagnosis & Analisis:
-Kesimpulan Utama: Hipotesis Berhasil Total. Augmentasi Mosaic terbukti menjadi teknik yang paling berdampak untuk meningkatkan performa. Ia tidak hanya menaikkan mAP keseluruhan secara signifikan, tetapi juga secara spesifik meningkatkan presisi bounding box (mAP@.75) dan mengangkat performa semua kelas, termasuk kelas Manfish yang sebelumnya stagnan.
-Model Final: Konfigurasi ini menghasilkan model dengan performa terbaik dan paling seimbang dari semua eksperimen yang telah dilakukan.
-💡 Rencana untuk Langkah Selanjutnya:
-Tidak Ada (Finalisasi). Dengan mAP keseluruhan yang telah menembus angka 60% dan mAP@.50 di atas 95%, model ini telah mencapai tingkat performa yang sangat tinggi untuk arsitektur RetinaNet pada dataset ini. Proses iterasi dan optimasi dianggap selesai. Model dari eksperimen ini akan digunakan sebagai model final untuk analisis dan kesimpulan skripsi.
+**Tujuan/Hipotesis:**
+Menambahkan augmentasi Mosaic akan membuat model lebih tangguh dalam mengenali objek dalam berbagai skala dan konteks, sehingga dapat meningkatkan performa pada kelas sulit (Manfish) dan mAP keseluruhan.
+
+🔧 **Pengaturan:**
+- **Base LR:** `2e-5`
+- **Augmentasi:** Menambahkan `Mosaic` ke pipeline dari Eksperimen #5
+- **Training:** Melanjutkan dari checkpoint Eksperimen #5 (epoch\_44.pth)
+- **Epoch Dijalankan:** 75 (hasil terbaik di epoch 31 dari sesi fine-tuning)
+
+📊 **Hasil Terbaik (Epoch 31 Sesi Fine-Tuning):**
+- **mAP@.50:.95:** 62.9% (🔼 Naik signifikan dari 59.2%)
+- **mAP@.50:** 95.2% (🔼 Naik dari 94.0%)
+- **mAP@.75:** 70.8% (🔼 Naik signifikan dari 67.6%)
+---
 
 ### 📌 Ringkasan Hasil Eksperimen
 
