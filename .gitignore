@@ -5,6 +5,8 @@
 !.gitignore
 !mmdetection/
 !*.py
-# !*.pth
 !*.ipynb
 !*.md
+
+# Abaikan semua file model besar
+*.pth
