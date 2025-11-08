@@ -8,5 +8,3 @@
 !*.ipynb
 !*.md
 
-# Abaikan semua file model besar
-*.pth
