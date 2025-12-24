@@ -11,7 +11,7 @@ from mmdet.apis import init_detector
 from mmdet.visualization import DetLocalVisualizer
 from mmengine.registry import DATASETS
 from mmdet.utils import register_all_modules
-
+from mmdet.apis import init_detector, inference_detector
 # ===================================================================
 # BAGIAN 1: KONFIGURASI YANG HARUS SAMA DENGAN SKRIP TRAINING
 # ===================================================================
